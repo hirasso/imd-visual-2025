@@ -1,9 +1,10 @@
 import { gsap } from "gsap";
 import { defineComponent, isTouch, prefersReducedMotion } from "../../utils.js";
 
+const properties = ["x", "y", "scaleX", "scaleY", "skewX", "skewY"] as const;
 const defaults = {
   strength: { x: 0.05, y: 0.05 },
-  properties: ["x", "y", "scaleX", "scaleY", "skewX", "skewY"],
+  properties,
   scaleWithMouseDistance: false,
   scaleOnHover: false,
   duration: 1,
@@ -93,7 +94,6 @@ export default defineComponent((options: Options = {}) => {
       if (this.options.scaleWithMouseDistance) {
         this.scaleWithMouse({ x: clientX, y: clientY });
       }
-
     },
 
     onMouseEnter() {
@@ -125,7 +125,7 @@ export default defineComponent((options: Options = {}) => {
       });
     },
 
-    scaleWithMouse(pos) {
+    scaleWithMouse(pos: { x: number; y: number }) {
       const distX = pos.x + window.scrollX - this.center.x;
       const distY = pos.y + window.scrollY - this.center.y;
       const dist = Math.sqrt(distX * distX + distY * distY);
@@ -167,12 +167,12 @@ export default defineComponent((options: Options = {}) => {
         borderRadius: `${1 + scale.x * 2}em ${1 + scale.y * 2}em`,
       };
 
-      const props = {};
-      this.options.properties.forEach((prop) => {
-        props[prop] = allProps[prop];
-      });
+      const filteredProps = this.options.properties.reduce((acc, key) => {
+        acc[key] = allProps[key];
+        return acc;
+      }, {} as Partial<typeof allProps>);
 
-      gsap.set(this.$el, props);
+      gsap.set(this.$el, filteredProps);
     },
 
     onAnimationFrame() {

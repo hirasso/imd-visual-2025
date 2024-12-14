@@ -93,6 +93,7 @@ export default defineComponent((options: Partial<typeof defaults> = {}) => {
       });
 
       // Controls (optional, for debugging)
+      // @ts-ignore wrong type here for renderer.domElement
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enabled = false; // Disable by default to lock the camera inside the cube
 
