@@ -3,14 +3,8 @@ import Object from "./Object.astro";
 ---
 
 <main x-data x-cloak>
-
   <div x-data="Room" x-bind="bindings" class="room">
-    <div
-      x-data="Float({scaleWithMouseDistance: false})"
-      x-bind="bindings"
-      class="cube"
-    >
-    </div>
+    <div x-data="Float" x-bind="bindings" class="cube"></div>
   </div>
 
   <!-- controls the outer bounds of the objects -->
