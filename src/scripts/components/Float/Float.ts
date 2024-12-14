@@ -6,7 +6,7 @@ type Property = (typeof properties)[number];
 
 const defaults = {
   strength: { x: 0.05, y: 0.05 },
-  properties,
+  properties: [...properties],
   scaleWithMouseDistance: false,
   scaleOnHover: false,
   duration: 1,
