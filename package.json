@@ -2,11 +2,18 @@
   "name": "imd-visual-2025",
   "type": "module",
   "version": "0.0.1",
+  "private": true,
+  "author": {
+    "name": "Rasso Hilber",
+    "email": "mail@rassohilber.com",
+    "url": "https://rassohilber.com"
+  },
   "scripts": {
     "watch": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "alpinejs": "^3.14.7",
