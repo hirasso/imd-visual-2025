@@ -2,6 +2,8 @@ import { gsap } from "gsap";
 import { defineComponent, isTouch, prefersReducedMotion } from "../../utils.js";
 
 const properties = ["x", "y", "scaleX", "scaleY", "skewX", "skewY"] as const;
+type Property = (typeof properties)[number];
+
 const defaults = {
   strength: { x: 0.05, y: 0.05 },
   properties,
@@ -157,22 +159,21 @@ export default defineComponent((options: Options = {}) => {
         y: delta.y * this.options.strength.y * 100 * this.scale,
       };
 
-      const allProps = {
+      const allProps: Record<Property, string | number> = {
         x: pos.x,
         y: pos.y,
         scaleX: scale.x,
         scaleY: scale.y,
         skewX: `${skew.x}deg`,
         skewY: `${skew.y}deg`,
-        borderRadius: `${1 + scale.x * 2}em ${1 + scale.y * 2}em`,
       };
 
-      const filteredProps = this.options.properties.reduce((acc, key) => {
+      const props = this.options.properties.reduce((acc, key) => {
         acc[key] = allProps[key];
         return acc;
       }, {} as Partial<typeof allProps>);
 
-      gsap.set(this.$el, filteredProps);
+      gsap.set(this.$el, props);
     },
 
     onAnimationFrame() {
