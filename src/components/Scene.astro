@@ -6,7 +6,7 @@ import Object from "./Object.astro";
   <!-- controls the outer bounds of the balls -->
   <div class="bounds"></div>
 
-  <div x-data="Room" class="room">
+  <div x-data="Room" x-bind="bindings" class="room">
     <div
       x-data="Float({scaleWithMouseDistance: false})"
       x-bind="bindings"
@@ -17,9 +17,9 @@ import Object from "./Object.astro";
 
   <Object size={20} image={"sphere"} />
 
-	<Object size={10} image={"sphere"} />
+  <Object size={10} image={"sphere"} />
 
-	<Object size={5} image={"sphere"} />
+  <Object size={5} image={"sphere"} />
 
   <!-- <div
     class="object"

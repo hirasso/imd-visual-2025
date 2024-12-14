@@ -1,5 +1,5 @@
 import { gsap } from "gsap";
-import { $, defineComponent } from "../../utils.js";
+import { $, defineComponent, isTouch } from "../../utils.js";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -9,13 +9,16 @@ import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
 const defaults = {};
 
 export default defineComponent((options: Partial<typeof defaults> = {}) => {
-  return {
-    init() {
-      const cubeSegments = 20; // Number of segments per edge
-      const cubeSize = 20; // Size of the cube
-      const cubeDepth = 50;
-      const rotationSpeed = 0.0005;
+  const cubeSegments = 20; // Number of segments per edge
+  const cubeSize = 20; // Size of the cube
+  const cubeDepth = 50;
+  const rotationSpeed = 0.0005;
+  const tiltStrength = 0.05;
 
+  return {
+    tilt: { x: 0, y: 0 },
+
+    init() {
       // Scene, Camera, Renderer
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(
@@ -94,13 +97,16 @@ export default defineComponent((options: Partial<typeof defaults> = {}) => {
       controls.enabled = false; // Disable by default to lock the camera inside the cube
 
       // Animation Loop
-      function animate() {
+      const animate = () => {
         requestAnimationFrame(animate);
 
         cube.rotation.z += rotationSpeed;
+        cube.rotation.x = tiltStrength - 2 * tiltStrength * this.tilt.x;
+        cube.rotation.y = -tiltStrength + 2 * tiltStrength * this.tilt.y;
+
         // Render the scene
         renderer.render(scene, camera);
-      }
+      };
       animate();
 
       // Listen for messages from the parent page
@@ -116,13 +122,26 @@ export default defineComponent((options: Partial<typeof defaults> = {}) => {
         return;
         const modified = cam.z * 1 * progress;
         camera.position.z = cam.z < 0 ? cam.z + modified : cam.z - modified;
-        camera.updateProjectionMatrix()
+        camera.updateProjectionMatrix();
       });
     },
 
     getSize() {
       const { width, height } = this.$root.getBoundingClientRect();
       return { width, height };
+    },
+
+    bindings: {
+      "@mousemove.window": "onMouseMove",
+    },
+
+    onMouseMove({ clientX, clientY }: PointerEvent) {
+      gsap.to(this.tilt, {
+        x: clientY / window.innerHeight,
+        y: clientX / window.innerWidth,
+        duration: 0.5,
+        ease: "power4.out",
+      });
     },
   };
 });
