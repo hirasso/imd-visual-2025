@@ -6,5 +6,11 @@ import favicons from "astro-favicons";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [relativeLinks(), favicons()],
+  integrations: [
+    relativeLinks(),
+    favicons({
+      name: "IMD Visual",
+      short_name: "IMD",
+    }),
+  ],
 });
