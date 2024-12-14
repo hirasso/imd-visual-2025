@@ -3,12 +3,19 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "watch": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.0.5"
+    "alpinejs": "^3.14.7",
+    "astro": "^5.0.5",
+    "gsap": "^3.12.5",
+    "three": "^0.171.0"
+  },
+  "devDependencies": {
+    "@types/alpinejs": "^3.13.11",
+    "@types/three": "^0.170.0"
   }
 }

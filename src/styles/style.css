@@ -1,0 +1,143 @@
+:root {
+  font-family: system-ui;
+  margin: 0;
+}
+
+[x-cloak] {
+  visibility: hidden;
+}
+
+main {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  /* background: radial-gradient(circle at 100% 0%, #fff, #fff 50%, #ccc); */
+}
+
+.bounds {
+  position: absolute;
+  inset: max(10px, 5vmin);
+  pointer-events: none;
+  /* border: 1px solid red; */
+}
+
+.ball {
+  position: fixed;
+  width: 270px;
+  height: 270px;
+  border-radius: 100%;
+  /* border: 1px solid red; */
+  top: 0;
+  left: 0;
+}
+
+.ball svg {
+  position: absolute;
+  display: block;
+  width: 200vmax;
+  height: 200vmax;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.room {
+  position: absolute;
+  width: 150vw;
+  height: 150vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: all;
+}
+.room svg {
+  background: transparent !important;
+}
+.room svg path {
+  stroke-width: 0.5px !important;
+}
+
+.object {
+  position: fixed;
+  top: 0;
+  left: 0;
+  --size: 20;
+  width: calc(var(--size) * 1vmin);
+  height: calc(var(--size) * 1vmin);
+}
+.object * {
+  position: absolute;
+  inset: 0;
+}
+
+.object_visual {
+  --orbit: calc(var(--size) * 0.05vmin);
+  /* animation-name: orbit;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 4s; */
+}
+.object img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: all;
+}
+/*
+.object_visual.--sphere {
+  --color-light: #dadada;
+  --color-dark: #dbdbdb;
+  --color-shadow: rgb(0 0 0 / 0.5);
+  background: var(--color-light);
+  background-image: radial-gradient(
+    circle at 80% 10%,
+    var(--color-light) 20%,
+    var(--color-dark) 50%,
+    var(--color-shadow) 80%
+  );
+  border-radius: 50%;
+  box-shadow: 0 0 calc(var(--size) * 1px) 0 rgb(0 0 0 / 0.2) inset;
+} */
+/*
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(var(--orbit)) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(var(--orbit)) rotate(-360deg);
+  }
+} */
+/*
+@keyframes hovering {
+  0% {
+    transform: translateY(var(--hover-range));
+  }
+  50% {
+    transform: translateY(calc(var(--hover-range) * -1));
+  }
+  100% {
+    transform: translateY(var(--hover-range));
+  }
+} */
+/*
+.object_visual.--blocks img {
+  position: absolute;
+  --duration: 6s;
+  --stagger: 0.025;
+  --hover-range: 1rem;
+  animation: hovering var(--duration) infinite;
+  &:nth-child(1) {
+    top: -20%;
+    z-index: 3;
+  }
+  &:nth-child(2) {
+    animation-delay: calc(var(--duration) * var(--stagger) * -1);
+  }
+  &:nth-child(3) {
+    top: 20%;
+    z-index: -1;
+    animation-delay: calc(var(--duration) * var(--stagger) * -2);
+  }
+} */
