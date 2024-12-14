@@ -5,6 +5,7 @@
 
 [x-cloak] {
   visibility: hidden;
+  opacity: 0;
 }
 
 main {
