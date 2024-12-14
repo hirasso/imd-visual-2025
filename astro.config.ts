@@ -1,4 +1,9 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
+
+import relativeLinks from "astro-relative-links";
 
 // https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  base: "./",
+  integrations: [relativeLinks()],
+});

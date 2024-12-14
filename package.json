@@ -13,16 +13,19 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "deploy": "pnpm build && source .env && rsync -avz --delete --copy-links ./dist/ ${DEPLOY_DESTINATION}/${PWD##*/}"
   },
   "dependencies": {
     "alpinejs": "^3.14.7",
     "astro": "^5.0.5",
+    "astro-relative-links": "^0.4.0",
     "gsap": "^3.12.5",
     "three": "^0.171.0"
   },
   "devDependencies": {
     "@types/alpinejs": "^3.13.11",
-    "@types/three": "^0.170.0"
+    "@types/three": "^0.170.0",
+    "sharp": "^0.33.5"
   }
 }
