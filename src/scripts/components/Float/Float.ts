@@ -1,5 +1,5 @@
 import { gsap } from "gsap";
-import { defineComponent, isTouch } from "../../utils.js";
+import { defineComponent, isTouch, prefersReducedMotion } from "../../utils.js";
 
 const defaults = {
   strength: { x: 0.05, y: 0.05 },
@@ -73,7 +73,7 @@ export default defineComponent((options: Options = {}) => {
     },
 
     onMouseMove({ clientX, clientY }: MouseEvent) {
-      if (isTouch()) return;
+      if (isTouch() || prefersReducedMotion()) return;
 
       this.targetMousePosition = {
         x: gsap.utils.normalize(

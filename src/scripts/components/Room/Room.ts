@@ -1,5 +1,5 @@
 import { gsap } from "gsap";
-import { $, defineComponent, isTouch } from "../../utils.js";
+import { $, defineComponent, isTouch, prefersReducedMotion } from "../../utils.js";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -98,7 +98,9 @@ export default defineComponent((options: Partial<typeof defaults> = {}) => {
 
       // Animation Loop
       const animate = () => {
-        requestAnimationFrame(animate);
+        if (!prefersReducedMotion()) {
+          requestAnimationFrame(animate);
+        }
 
         cube.rotation.z += rotationSpeed;
         cube.rotation.x = tiltStrength - 2 * tiltStrength * this.tilt.x;
