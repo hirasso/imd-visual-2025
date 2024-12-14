@@ -3,8 +3,6 @@ import Object from "./Object.astro";
 ---
 
 <main x-data x-cloak>
-  <!-- controls the outer bounds of the balls -->
-  <div class="bounds"></div>
 
   <div x-data="Room" x-bind="bindings" class="room">
     <div
@@ -15,10 +13,11 @@ import Object from "./Object.astro";
     </div>
   </div>
 
+  <!-- controls the outer bounds of the objects -->
+  <div class="bounds"></div>
+
   <Object size={20} image={"sphere"} />
-
   <Object size={10} image={"sphere"} />
-
   <Object size={5} image={"sphere"} />
 
   <!-- <div
