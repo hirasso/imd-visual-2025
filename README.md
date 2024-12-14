@@ -2,7 +2,7 @@
 
 Open sourced. 
 
-![Preview: IMD Visual 2025](https://github.com/user-attachments/assets/84732eb3-0ecc-4a45-970a-5170a731cc9e)
+![Preview: IMD Visual 2025](https://github.com/user-attachments/assets/70a88135-e905-4acc-9a2e-b5e202657b63)
 
 
 ## 🚀 Project Structure
