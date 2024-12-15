@@ -71,14 +71,6 @@ main {
   inset: 0;
 }
 
-.object_visual {
-  --orbit: calc(var(--size) * 0.05vmin);
-  /* animation-name: orbit;
-  animation-fill-mode: forwards;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-duration: 4s; */
-}
 .object img {
   display: block;
   width: 100%;
@@ -86,6 +78,7 @@ main {
   object-fit: contain;
   pointer-events: all;
 }
+
 /*
 .object_visual.--sphere {
   --color-light: #dadada;
@@ -101,44 +94,12 @@ main {
   border-radius: 50%;
   box-shadow: 0 0 calc(var(--size) * 1px) 0 rgb(0 0 0 / 0.2) inset;
 } */
-/*
-@keyframes orbit {
-  from {
-    transform: rotate(0deg) translateX(var(--orbit)) rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg) translateX(var(--orbit)) rotate(-360deg);
-  }
-} */
-/*
-@keyframes hovering {
-  0% {
-    transform: translateY(var(--hover-range));
-  }
-  50% {
-    transform: translateY(calc(var(--hover-range) * -1));
-  }
-  100% {
-    transform: translateY(var(--hover-range));
-  }
-} */
-/*
-.object_visual.--blocks img {
-  position: absolute;
-  --duration: 6s;
-  --stagger: 0.025;
-  --hover-range: 1rem;
-  animation: hovering var(--duration) infinite;
-  &:nth-child(1) {
-    top: -20%;
-    z-index: 3;
-  }
-  &:nth-child(2) {
-    animation-delay: calc(var(--duration) * var(--stagger) * -1);
-  }
-  &:nth-child(3) {
-    top: 20%;
-    z-index: -1;
-    animation-delay: calc(var(--duration) * var(--stagger) * -2);
-  }
-} */
+
+/**
+ * Build stacks of images
+ */
+.object.--stacked img {
+  position: relative;
+  height: auto;
+  margin-bottom: -25%;
+}

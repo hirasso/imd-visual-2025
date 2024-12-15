@@ -5,14 +5,20 @@ import type { Options as FloatOptions } from "../scripts/components/Float/Float.
 import type { Options as BallOptions } from "../scripts/components/Ball/Ball.ts";
 
 import sphere from "../assets/sphere.png";
+import block from "../assets/block.png";
+import block2 from "../assets/block-2.png";
 import disc from "../assets/disc.png";
-const images = { sphere, disc } as const;
+const images = { sphere, block, block2, disc } as const;
 
 type Props = {
   image: keyof typeof images;
   size: number;
+  /** how many images? */
+  amount?: number;
+  /** stack images? */
+  stacked?: boolean;
 };
-const { size, image } = Astro.props;
+const { size, image, amount = 1, stacked = false } = Astro.props;
 
 const { min } = Math;
 
@@ -33,14 +39,22 @@ const ballOptions: BallOptions = {
 ---
 
 <div
-  class="object"
+  class:list={["object", { "--stacked": stacked }]}
   x-data={`Ball(${JSON.stringify(ballOptions)})`}
   x-bind="bindings"
   style={{ "--size": size, zIndex: 1000 - size }}
 >
   <div x-data={`Float(${JSON.stringify(floatOptions)})`} x-bind="bindings">
     <div class="object_visual">
-      <Image src={images[image]} alt="A Sphere." />
+      {
+        Array.from({ length: amount }).map((_, index) => (
+          <Image
+            src={images[image]}
+            style={{ zIndex: 1000 - index }}
+            alt="A Sphere."
+          />
+        ))
+      }
     </div>
   </div>
 </div>

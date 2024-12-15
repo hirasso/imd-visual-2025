@@ -10,80 +10,14 @@ import Object from "./Object.astro";
   <!-- controls the outer bounds of the objects -->
   <div class="bounds"></div>
 
-  <Object size={20} image={"sphere"} />
+  <Object size={30} image={"sphere"} />
   <Object size={10} image={"sphere"} />
   <Object size={5} image={"sphere"} />
 
-  <!-- <div
-    class="object"
-    x-data="Ball({container: '.bounds', initialRotation: 0, speedRotation: 0, speedX: 1, speedY: 1})"
-    x-bind="bindings"
-    style="z-index: 1"
-  >
-    <div x-data={`Float(${floatOptions})`} x-bind="bindings">
-      <div class="object_visual">
-        <Image src={sphere} alt="A Sphere." />
-      </div>
-    </div>
-  </div> -->
+  <!-- <Object size={30} image={"block"} amount={3} stacked={true} />
+  <Object size={10} image={"block2"} amount={4} stacked={true} />
+  <Object size={20} image={"disc"} amount={2} stacked={true} /> -->
 
-  <!-- <div
-    class="object"
-    x-data="Ball({container: '.bounds', initialRotation: 0, speedRotation: 0, speedX: 0.1, speedY: 0.1})"
-    x-bind="bindings"
-    style="z-index: 2"
-  >
-    <div x-data="Float({strength: { x: 0.1, y: 0.1 }})" x-bind="bindings">
-      <div class="object_visual" style="--size: 10">
-        <Image src={sphere} alt="A Sphere." />
-      </div>
-    </div>
-  </div> -->
-
-  <!-- <div
-    class="object"
-    x-data="Ball({container: '.bounds', initialRotation: 0, speedRotation: 0, speedX: 0.05, speedY: 0.05})"
-    x-bind="bindings"
-    style="z-index: 3"
-  >
-    <div x-data="Float({strength: { x: 0.1, y: 0.1 }})" x-bind="bindings">
-      <div class="object_visual" style="--size: 5">
-        <Image src={sphere} alt="A Sphere." />
-      </div>
-    </div>
-  </div> -->
-
-  <!-- <div
-						class="object"
-						x-data="Ball({container: '.stage', initialRotation: 0, paused: true})"
-						style="z-index: 0;">
-						<div class="object_visual --blocks" style="--size: 15">
-								<?= get_image('assets/static/objects/web/block.png') ?>
-								<?= get_image('assets/static/objects/web/block.png') ?>
-								<?= get_image('assets/static/objects/web/block.png') ?>
-						</div>
-				</div> -->
-
-  <!-- <div
-						class="object"
-						x-data="Ball({container: '.stage', initialRotation: 0, paused: true})"
-						style="z-index: 0;">
-						<div class="object_visual --blocks" style="--size: 45">
-								<?= get_image('assets/static/objects/web/block-2.png') ?>
-								<?= get_image('assets/static/objects/web/block-2.png') ?>
-								<?= get_image('assets/static/objects/web/block-2.png') ?>
-						</div>
-				</div> -->
-
-  <!-- <div
-						class="object"
-						x-data="Ball({container: '.stage', initialRotation: 0, paused: true})"
-						style="z-index: 0;">
-						<div class="object_visual --blocks" style="--size: 15">
-								<?= get_image('assets/static/objects/web/disc.png') ?>
-								<?= get_image('assets/static/objects/web/disc.png') ?>
-						</div>
-				</div> -->
 </main>
 
 <script src="../scripts/app.ts"></script>
