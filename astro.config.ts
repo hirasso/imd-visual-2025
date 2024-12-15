@@ -13,6 +13,7 @@ function dd(...args: any[]) {
 
 // https://astro.build/config
 export default defineConfig({
+  compressHTML: !import.meta.env.DEV,
   integrations: [
     relativeLinks(),
     favicons({
