@@ -159,8 +159,8 @@ export default defineComponent((options: Options = {}) => {
           Math.abs(delta.y) * Math.abs(this.options.strength.y) * 0.15,
       };
       const skew = {
-        x: delta.x * this.options.strength.x * 100 * this.scale,
-        y: delta.y * this.options.strength.y * 100 * this.scale,
+        x: delta.x * this.options.strength.x * 400 * this.scale,
+        y: delta.y * this.options.strength.y * 400 * this.scale,
       };
 
       const allProps: Record<Property, string | number> = {
