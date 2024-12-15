@@ -4,6 +4,8 @@ import relativeLinks from "astro-relative-links";
 
 import favicons from "astro-favicons";
 
+import alpinejs from "@astrojs/alpinejs";
+
 function dd(...args: any[]) {
   console.log(...args);
   process.exit();
@@ -18,5 +20,6 @@ export default defineConfig({
       short_name: "IMD",
       manifestRelativePaths: true,
     }),
+    alpinejs({ entrypoint: "/src/scripts/alpine.ts" }),
   ],
 });
