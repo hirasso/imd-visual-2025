@@ -21,7 +21,7 @@
     "alpinejs": "^3.14.7",
     "astro": "^5.0.5",
     "astro-favicons": "^3.1.1",
-    "astro-relative-links": "^0.4.0",
+    "astro-relative-links": "^0.4.2",
     "gsap": "^3.12.5",
     "sharp": "^0.33.5",
     "three": "^0.171.0"

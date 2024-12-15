@@ -21,8 +21,8 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(astro@5.0.5(@types/node@22.10.2)(rollup@4.28.1)(typescript@5.7.2))
       astro-relative-links:
-        specifier: ^0.4.0
-        version: 0.4.0(astro@5.0.5(@types/node@22.10.2)(rollup@4.28.1)(typescript@5.7.2))
+        specifier: ^0.4.2
+        version: 0.4.2(astro@5.0.5(@types/node@22.10.2)(rollup@4.28.1)(typescript@5.7.2))
       gsap:
         specifier: ^3.12.5
         version: 3.12.5
@@ -719,10 +719,10 @@ packages:
     peerDependencies:
       astro: '>= 4.0.0'
 
-  astro-relative-links@0.4.0:
-    resolution: {integrity: sha512-pqeWeID9btm0LShMTIGOhpCzBnchLnZYmcsiS4Z96IxwRVsuyTNQkAcFpT8VvRVH2rao/nwALqrcTcZAHsdQNA==}
+  astro-relative-links@0.4.2:
+    resolution: {integrity: sha512-YXwnmZz47yxiIIxWR10LwpGlqvGTERJ7JWX2lFRINTg/sFaPkqTx9xNM50W1+9FNMMxtTn7C8YNW5yDVX33Vzw==}
     peerDependencies:
-      astro: ^3.0.0 || ^4.0.0
+      astro: '>=3.0.0'
 
   astro@5.0.5:
     resolution: {integrity: sha512-xfptdmurDsQcj/Anc7mU+eKlcyV7ppJIlmaSwhX3ZWwK5N/0rGKVmUqnuILgR6MB0XVJiIfublNzDGoyj4Q6BQ==}
@@ -2186,7 +2186,7 @@ snapshots:
       favilib: 1.0.5
       ultrahtml: 1.5.3
 
-  astro-relative-links@0.4.0(astro@5.0.5(@types/node@22.10.2)(rollup@4.28.1)(typescript@5.7.2)):
+  astro-relative-links@0.4.2(astro@5.0.5(@types/node@22.10.2)(rollup@4.28.1)(typescript@5.7.2)):
     dependencies:
       astro: 5.0.5(@types/node@22.10.2)(rollup@4.28.1)(typescript@5.7.2)
       glob: 10.4.5
