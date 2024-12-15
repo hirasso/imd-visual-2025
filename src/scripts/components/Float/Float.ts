@@ -34,6 +34,10 @@ export default defineComponent((options: Options = {}) => {
 
     init() {
       this.rotation = this.options.rotate.initial;
+
+      /** make options.properties unique */
+      this.options.properties = [...new Set(this.options.properties)];
+
       this.setInitialStyles();
       this.$el.classList.add("float-enabled");
       this.fit();
