@@ -1,6 +1,9 @@
+
 # IMD Visual 2025
   
-[![Click to view](https://github.com/user-attachments/assets/70a88135-e905-4acc-9a2e-b5e202657b63)](https://internationales-musikinstitut.de/imd-visual-2025/)
+
+https://github.com/user-attachments/assets/b065b5df-2d26-4a81-9a2c-b27b5bae4fa3
+
 
 ## 👀 Link
 
