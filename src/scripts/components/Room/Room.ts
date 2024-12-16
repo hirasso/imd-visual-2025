@@ -13,25 +13,21 @@ export default defineComponent(() => {
   const rotationSpeed = 0.0005;
   const tiltStrength = 0.05;
 
-  // Scene, Camera, Renderer
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    50,
-    window.innerWidth / window.innerHeight,
-    0.5,
-    1000
-  );
-
-  const renderer = new SVGRenderer();
-
-  const cam = {
-    x: gsap.utils.random(-6, 6),
-    y: gsap.utils.random(-6, 6),
-    z: -10,
-  };
-
   return {
     tilt: { x: 0, y: 0 },
+    scene: new THREE.Scene(),
+    camera: new THREE.PerspectiveCamera(
+      50,
+      window.innerWidth / window.innerHeight,
+      0.5,
+      1000
+    ),
+    cam: {
+      x: gsap.utils.random(-6, 6),
+      y: gsap.utils.random(-6, 6),
+      z: -10,
+    },
+    renderer: new SVGRenderer(),
 
     bindings: {
       "@scroll:progress.window": "onScrollProgress",
@@ -41,10 +37,10 @@ export default defineComponent(() => {
 
     async init() {
       // Move the camera to a new position
-      camera.position.set(cam.x, cam.y, cam.z);
+      this.camera.position.set(this.cam.x, this.cam.y, this.cam.z);
 
       this.onResize();
-      $("[data-slot]", this.$root)!.replaceWith(renderer.domElement);
+      $("[data-slot]", this.$root)!.replaceWith(this.renderer.domElement);
 
       // Create the box geometry
       const geometry = new THREE.BoxGeometry(
@@ -79,11 +75,11 @@ export default defineComponent(() => {
       );
 
       cube.add(grid1);
-      scene.add(cube);
+      this.scene.add(cube);
 
       // Controls (optional, for debugging)
-      // @ts-ignore wrong type here for renderer.domElement
-      const controls = new OrbitControls(camera, renderer.domElement);
+      // @ts-ignore
+      const controls = new OrbitControls(this.camera, this.renderer.domElement);
       controls.enabled = false; // Disable by default to lock the camera inside the cube
 
       // Animation Loop
@@ -97,7 +93,7 @@ export default defineComponent(() => {
         cube.rotation.y = -tiltStrength + 2 * tiltStrength * this.tilt.y;
 
         // Render the scene
-        renderer.render(scene, camera);
+        this.renderer.render(this.scene, this.camera);
       };
       animate();
     },
@@ -113,16 +109,16 @@ export default defineComponent(() => {
     onScrollProgress({
       detail: { progress },
     }: CustomEvent<{ progress: number }>) {
-      const modified = cam.z * 1 * progress;
-      camera.position.z = cam.z < 0 ? cam.z + modified : cam.z - modified;
-      camera.updateProjectionMatrix();
+      const modified = this.cam.z * 1 * progress;
+      this.camera.position.z = this.cam.z < 0 ? this.cam.z + modified : this.cam.z - modified;
+      this.camera.updateProjectionMatrix();
     },
 
     onResize() {
       const { width, height } = this.getSize();
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(width, height);
     },
 
     onPointerMove({ clientX, clientY }: PointerEvent) {
