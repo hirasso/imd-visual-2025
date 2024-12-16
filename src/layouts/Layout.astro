@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      /** Force a trailing slash. Otherwise, relative links won't work */
+      if (!window.location.pathname.endsWith("/")) {
+        window.location.replace(window.location.href + '/');
+      }
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
