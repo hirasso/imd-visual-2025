@@ -1,5 +1,5 @@
 import { gsap } from "gsap";
-import { $, defineComponent, isTouch, prefersReducedMotion } from "../../utils.js";
+import { $, defineComponent, prefersReducedMotion } from "../../utils.js";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -135,10 +135,10 @@ export default defineComponent((options: Partial<typeof defaults> = {}) => {
     },
 
     bindings: {
-      "@mousemove.window": "onMouseMove",
+      "@pointermove.window": "onPointerMove",
     },
 
-    onMouseMove({ clientX, clientY }: PointerEvent) {
+    onPointerMove({ clientX, clientY }: PointerEvent) {
       gsap.to(this.tilt, {
         x: clientY / window.innerHeight,
         y: clientX / window.innerWidth,

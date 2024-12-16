@@ -1,5 +1,5 @@
 import { gsap } from "gsap";
-import { defineComponent, isTouch, prefersReducedMotion } from "../../utils.js";
+import { defineComponent, prefersReducedMotion } from "../../utils.js";
 
 const properties = ["x", "y", "scaleX", "scaleY", "skewX", "skewY"] as const;
 type Property = (typeof properties)[number];
@@ -50,7 +50,7 @@ export default defineComponent((options: Options = {}) => {
 
     bindings: {
       "x-on:resize.window": "fit",
-      "x-on:mousemove.window": "onMouseMove",
+      "x-on:pointermove.window": "onPointerMove",
       "x-on:mouseenter": "onMouseEnter",
       "x-on:mouseleave": "onMouseLeave",
     },
@@ -79,8 +79,8 @@ export default defineComponent((options: Options = {}) => {
       };
     },
 
-    onMouseMove({ clientX, clientY }: MouseEvent) {
-      if (isTouch() || prefersReducedMotion()) return;
+    onPointerMove({ clientX, clientY }: MouseEvent) {
+      if (prefersReducedMotion()) return;
 
       this.targetMousePosition = {
         x: gsap.utils.normalize(
