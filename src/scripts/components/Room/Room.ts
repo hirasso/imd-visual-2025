@@ -6,48 +6,45 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createGridBoxGeometry } from "./createGridBoxGeometry.js";
 import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
 
-const defaults = {};
-
-export default defineComponent((options: Partial<typeof defaults> = {}) => {
+export default defineComponent(() => {
   const cubeSegments = 20; // Number of segments per edge
   const cubeSize = 20; // Size of the cube
   const cubeDepth = 50;
   const rotationSpeed = 0.0005;
   const tiltStrength = 0.05;
 
+  // Scene, Camera, Renderer
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    50,
+    window.innerWidth / window.innerHeight,
+    0.5,
+    1000
+  );
+
+  const renderer = new SVGRenderer();
+
+  const cam = {
+    x: gsap.utils.random(-6, 6),
+    y: gsap.utils.random(-6, 6),
+    z: -10,
+  };
+
   return {
     tilt: { x: 0, y: 0 },
 
-    init() {
-      // Scene, Camera, Renderer
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(
-        50,
-        window.innerWidth / window.innerHeight,
-        0.5,
-        1000
-      );
+    bindings: {
+      "@scroll:progress.window": "onScrollProgress",
+      "@pointermove.window": "onPointerMove",
+      "@resize.window": "onResize"
+    },
 
-      const cam = {
-        x: gsap.utils.random(-6, 6),
-        y: gsap.utils.random(-6, 6),
-        z: -10,
-      };
-
+    async init() {
       // Move the camera to a new position
       camera.position.set(cam.x, cam.y, cam.z);
 
-      // const renderer = new THREE.WebGLRenderer({
-      //   antialias: true,
-      //   alpha: true,
-      // });
-      const renderer = new SVGRenderer();
-      // renderer.setClearColor(new THREE.Color('transparent'), 1);
-
-      // renderer.setPixelRatio(window.devicePixelRatio);
-      const size = this.getSize();
-      renderer.setSize(size.width, size.height);
-      $(".cube", this.$root)!.appendChild(renderer.domElement);
+      this.onResize();
+      $("[data-slot]", this.$root)!.replaceWith(renderer.domElement);
 
       // Create the box geometry
       const geometry = new THREE.BoxGeometry(
@@ -84,14 +81,6 @@ export default defineComponent((options: Partial<typeof defaults> = {}) => {
       cube.add(grid1);
       scene.add(cube);
 
-      // Resize Handler
-      window.addEventListener("resize", () => {
-        const { width, height } = this.getSize();
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
-      });
-
       // Controls (optional, for debugging)
       // @ts-ignore wrong type here for renderer.domElement
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -111,22 +100,6 @@ export default defineComponent((options: Partial<typeof defaults> = {}) => {
         renderer.render(scene, camera);
       };
       animate();
-
-      // Listen for messages from the parent page
-      window.addEventListener("message", (event) => {
-        // Validate the origin for security
-        if (event.origin !== window.location.origin) return;
-
-        const { type, progress } = event.data;
-        if (type !== "scrollProgress") {
-          return;
-        }
-
-        return;
-        const modified = cam.z * 1 * progress;
-        camera.position.z = cam.z < 0 ? cam.z + modified : cam.z - modified;
-        camera.updateProjectionMatrix();
-      });
     },
 
     getSize() {
@@ -134,8 +107,22 @@ export default defineComponent((options: Partial<typeof defaults> = {}) => {
       return { width, height };
     },
 
-    bindings: {
-      "@pointermove.window": "onPointerMove",
+    /**
+     * This event is expected to come from outside the iframe
+     */
+    onScrollProgress({
+      detail: { progress },
+    }: CustomEvent<{ progress: number }>) {
+      const modified = cam.z * 1 * progress;
+      camera.position.z = cam.z < 0 ? cam.z + modified : cam.z - modified;
+      camera.updateProjectionMatrix();
+    },
+
+    onResize() {
+      const { width, height } = this.getSize();
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
     },
 
     onPointerMove({ clientX, clientY }: PointerEvent) {

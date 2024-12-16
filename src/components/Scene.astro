@@ -2,9 +2,11 @@
 import Object from "./Object.astro";
 ---
 
-<main x-data x-cloak>
+<main x-data="Scene" x-cloak x-bind="bindings">
   <div x-data="Room" x-bind="bindings" class="room">
-    <div x-data="Float" x-bind="bindings" class="cube"></div>
+    <div x-data="Float" x-bind="bindings">
+      <div data-slot></div>
+    </div>
   </div>
 
   <!-- controls the outer bounds of the objects -->
@@ -17,5 +19,4 @@ import Object from "./Object.astro";
   <!-- <Object size={30} image={"block"} amount={3} stacked={true} />
   <Object size={10} image={"block2"} amount={4} stacked={true} />
   <Object size={20} image={"disc"} amount={2} stacked={true} /> -->
-
 </main>
