@@ -15,7 +15,7 @@ type Property = (typeof properties)[number];
 type Point = { x: number; y: number };
 
 const defaults = {
-  strength: { x: 0.2, y: 0.2 },
+  strength: { x: 0.1, y: 0.1 },
   properties: [...properties],
   scaleWithMouseDistance: false,
   scaleOnHover: false,
@@ -25,8 +25,6 @@ const defaults = {
 export type Options = Partial<typeof defaults>;
 
 export default defineComponent((options: Options = {}) => {
-  let animationFrameId: number | undefined;
-
   return {
     mousePosition: { x: 0, y: 0 },
     targetMousePosition: { x: 0, y: 0 },
@@ -84,9 +82,11 @@ export default defineComponent((options: Options = {}) => {
     onPointerMove({ clientX, clientY }: MouseEvent) {
       if (prefersReducedMotion()) return;
 
+      const { innerWidth: w, innerHeight: h } = window;
+
       this.targetMousePosition = {
-        x: clientX / window.innerWidth,
-        y: clientY / window.innerHeight,
+        x: gsap.utils.normalize(w / 2, w, clientX),
+        y: gsap.utils.normalize(h / 2, h, clientY),
       };
 
       this.animateMousePosition();
@@ -173,8 +173,8 @@ export default defineComponent((options: Options = {}) => {
       const allProps: Record<Property, string | number> = {
         x: pos.x * this.options.strength.x,
         y: pos.y * this.options.strength.y,
-        scaleX: 1 + scale * this.options.strength.x * 500, //scale.x,
-        scaleY: 1 - scale * this.options.strength.y * 500, //scale.y,
+        scaleX: 1 + scale * this.options.strength.x * 1000, //scale.x,
+        scaleY: 1 - scale * this.options.strength.y * 1000, //scale.y,
         rotation,
         skewX: `${skew.x}deg`,
         skewY: `${skew.y}deg`,
@@ -194,11 +194,7 @@ export default defineComponent((options: Options = {}) => {
       }
     },
 
-    destroy() {
-      if (animationFrameId) {
-        window.cancelAnimationFrame(animationFrameId);
-      }
-    },
+    destroy() {},
   };
 });
 

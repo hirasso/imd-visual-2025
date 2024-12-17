@@ -24,8 +24,8 @@ const { min, max } = Math;
 
 const floatOptions: FloatOptions = {
   strength: {
-    x: max(0.4, min(0.7, size * 0.05)),
-    y: max(0.4, min(0.7, size * 0.05)),
+    x: min(0.4, max(0.15, size * 0.02)),
+    y: min(0.4, max(0.15, size * 0.02)),
   },
   properties: ["x", "y", "rotation", "scaleX", "scaleY"],
 };
@@ -69,6 +69,8 @@ const ballOptions: BallOptions = {
     --size: 20;
     width: calc(var(--size) * 1vmin);
     height: calc(var(--size) * 1vmin);
+    /* border: 1px solid; */
+    border-radius: 100%;
   }
   .object * {
     position: absolute;
