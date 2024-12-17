@@ -20,13 +20,14 @@ type Props = {
 };
 const { size, image, amount = 1, stacked = false } = Astro.props;
 
-const { min } = Math;
+const { min, max } = Math;
 
 const floatOptions: FloatOptions = {
   strength: {
-    x: min(1, 0.05 + size * 0.001),
-    y: min(1, 0.05 + size * 0.001),
+    x: max(0.4, min(0.7, size * 0.05)),
+    y: max(0.4, min(0.7, size * 0.05)),
   },
+  properties: ["x", "y", "rotation", "scaleX", "scaleY"],
 };
 
 const ballOptions: BallOptions = {
@@ -42,7 +43,7 @@ const ballOptions: BallOptions = {
   class:list={["object", { "--stacked": stacked }]}
   x-data={`Ball(${JSON.stringify(ballOptions)})`}
   x-bind="bindings"
-  style={{ "--size": size, zIndex: 1000 - size }}
+  style={{ "--size": size, zIndex: size }}
 >
   <div x-data={`Float(${JSON.stringify(floatOptions)})`} x-bind="bindings">
     <div class="object_visual">

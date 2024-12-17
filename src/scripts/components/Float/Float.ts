@@ -1,20 +1,25 @@
 import { gsap } from "gsap";
-import { defineComponent, prefersReducedMotion } from "../../utils.js";
+import { $$, defineComponent, prefersReducedMotion } from "../../utils.js";
 
-const properties = ["x", "y", "scaleX", "scaleY", "skewX", "skewY"] as const;
+const properties = [
+  "x",
+  "y",
+  "scaleX",
+  "scaleY",
+  "rotation",
+  "skewX",
+  "skewY",
+] as const;
 type Property = (typeof properties)[number];
 
+type Point = { x: number; y: number };
+
 const defaults = {
-  strength: { x: 0.05, y: 0.05 },
+  strength: { x: 0.2, y: 0.2 },
   properties: [...properties],
   scaleWithMouseDistance: false,
   scaleOnHover: false,
   duration: 1,
-  rotate: {
-    initial: 0,
-    direction: 1,
-    speed: 0,
-  },
 };
 
 export type Options = Partial<typeof defaults>;
@@ -28,20 +33,19 @@ export default defineComponent((options: Options = {}) => {
     scale: 1,
     minScale: 1,
     position: null,
-    rotation: 0,
     options: { ...defaults, ...options },
     center: { x: 0, y: 0 },
+    children: [] as HTMLElement[],
 
     init() {
-      this.rotation = this.options.rotate.initial;
-
       /** make options.properties unique */
       this.options.properties = [...new Set(this.options.properties)];
+
+      this.children = $$(":scope > *", this.$root);
 
       this.setInitialStyles();
       this.$el.classList.add("float-enabled");
       this.fit();
-      this.onAnimationFrame();
 
       this.targetMousePosition = this.mousePosition = { x: 0, y: 0 };
 
@@ -56,7 +60,7 @@ export default defineComponent((options: Options = {}) => {
     },
 
     setInitialStyles() {
-      this.$el.style.willChange = "transform";
+      this.$root.style.willChange = "transform";
 
       const position = window.getComputedStyle(this.$el).position;
       switch (position) {
@@ -67,8 +71,6 @@ export default defineComponent((options: Options = {}) => {
           this.$el.style.position = "inline-block";
           break;
       }
-
-      gsap.set(this.$el, { rotation: this.options.rotate.initial });
     },
 
     fit() {
@@ -84,7 +86,7 @@ export default defineComponent((options: Options = {}) => {
 
       this.targetMousePosition = {
         x: clientX / window.innerWidth,
-        y: clientX / window.innerHeight,
+        y: clientY / window.innerHeight,
       };
 
       this.animateMousePosition();
@@ -141,32 +143,41 @@ export default defineComponent((options: Options = {}) => {
       /** delta, rounded to 4 decimal points */
       const delta = {
         x: parseFloat((targetX - currentX).toFixed(4)),
-        y: parseFloat((currentY - targetY).toFixed(4)),
+        y: parseFloat((targetY - currentY).toFixed(4)),
       };
+
+      // Calculate the angle in radians
+      const angleInRadians = Math.atan2(delta.y, delta.x);
+
+      // Convert radians to degrees
+      const angleInDegrees = angleInRadians * (180 / Math.PI);
 
       const pos = {
         x: -this.mousePosition.x * this.options.strength.x * this.scale * 500,
         y: -this.mousePosition.y * this.options.strength.y * this.scale * 500,
       };
 
-      const scale = {
-        x: this.scale + Math.abs(delta.x) * this.options.strength.x * 0.15,
-        y: this.scale + Math.abs(delta.y) * this.options.strength.y * 0.15,
-      };
+      // const scale = {
+      //   x: this.scale + Math.abs(delta.x) * this.options.strength.x * 0.15,
+      //   y: this.scale + Math.abs(delta.y) * this.options.strength.y * 0.15,
+      // };
 
       const skew = {
-        x: delta.x * this.options.strength.x * 400 * this.scale,
-        y: delta.y * this.options.strength.y * 400 * this.scale,
+        x: abs(delta.x) * this.options.strength.x * 400 * this.scale,
+        y: abs(delta.y) * this.options.strength.y * 400 * this.scale,
       };
 
+      const rotation = getAngle(delta);
+      const scale = getScale(delta);
+
       const allProps: Record<Property, string | number> = {
-        x: pos.x,
-        y: pos.y,
-        scaleX: scale.x,
-        scaleY: scale.y,
-        skewX: `${skew.y}deg`,
+        x: pos.x * this.options.strength.x,
+        y: pos.y * this.options.strength.y,
+        scaleX: 1 + scale * this.options.strength.x * 500, //scale.x,
+        scaleY: 1 - scale * this.options.strength.y * 500, //scale.y,
+        rotation,
+        skewX: `${skew.x}deg`,
         skewY: `${skew.y}deg`,
-        // skewY: `${skew.y}deg`,
       };
 
       const props = this.options.properties.reduce((acc, key) => {
@@ -174,21 +185,13 @@ export default defineComponent((options: Options = {}) => {
         return acc;
       }, {} as Partial<typeof allProps>);
 
-      gsap.set(this.$el, props);
-    },
+      gsap.set(this.$root, props);
 
-    onAnimationFrame() {
-      this.maybeRotate();
-      animationFrameId = window.requestAnimationFrame(() =>
-        this.onAnimationFrame()
-      );
-    },
-
-    maybeRotate() {
-      if (!this.options.rotate) return;
-      this.rotation +=
-        this.options.rotate.speed * this.options.rotate.direction;
-      gsap.set(this.$el, { rotation: this.rotation });
+      if (this.options.properties.includes("rotation")) {
+        gsap.set(this.children, {
+          rotation: -rotation,
+        });
+      }
     },
 
     destroy() {
@@ -198,3 +201,14 @@ export default defineComponent((options: Options = {}) => {
     },
   };
 });
+
+// Function for Mouse Move Scale Change
+function getScale({ x, y }: Point) {
+  const distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+  return Math.min(distance / 735, 0.35);
+}
+
+// Function For Mouse Movement Angle in Degrees
+function getAngle({ x, y }: Point) {
+  return (Math.atan2(y, x) * 180) / Math.PI;
+}
