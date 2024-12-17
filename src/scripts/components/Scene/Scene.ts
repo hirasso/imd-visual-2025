@@ -14,7 +14,7 @@ export default defineComponent(() => {
     onMessage(e: MessageEvent) {
       switch (e.data.type) {
         case "pointermove":
-          this.forwardPointerMoveEvent(e.data);
+          this.forwardPointerMoveEvent(e);
           break;
 
         case "scroll:progress":
