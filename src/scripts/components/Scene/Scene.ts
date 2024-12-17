@@ -1,33 +1,20 @@
-import { defineComponent } from "../../utils.ts";
+import { defineComponent, isTouch } from "../../utils.ts";
 
 export default defineComponent(() => {
   return {
     init() {},
 
     bindings: {
-      "@message.window": "onPostMessage",
+      "@message.window": "onMessage",
     },
 
     /**
      * Listen for postMessage events from when this runs inside an iframe
      */
-    onPostMessage(e: MessageEvent) {
+    onMessage(e: MessageEvent) {
       switch (e.data.type) {
         case "pointermove":
-          const { clientX, clientY, pointerId, pointerType, pressure } = e.data;
-          // Create a synthetic pointer event
-          const pointerEvent = new PointerEvent("pointermove", {
-            bubbles: true,
-            cancelable: true,
-            clientX,
-            clientY,
-            pointerId,
-            pointerType,
-            pressure,
-          });
-
-          // Dispatch the event on the iframe's document
-          document.dispatchEvent(pointerEvent);
+          this.forwardPointerMoveEvent(e.data);
           break;
 
         case "scroll:progress":
@@ -40,6 +27,30 @@ export default defineComponent(() => {
           // this.$dispatch("scroll:progress", e.data);
           break;
       }
+    },
+
+    /**
+     * Dispatch a pointermove event (only if not on a touch device)
+     */
+    forwardPointerMoveEvent(e: MessageEvent) {
+      if (isTouch()) {
+        return;
+      }
+
+      const { clientX, clientY, pointerId, pointerType, pressure } = e.data;
+      // Create a synthetic pointer event
+      const pointerEvent = new PointerEvent("pointermove", {
+        bubbles: true,
+        cancelable: true,
+        clientX,
+        clientY,
+        pointerId,
+        pointerType,
+        pressure,
+      });
+
+      // Dispatch the event on the iframe's document
+      document.dispatchEvent(pointerEvent);
     },
   };
 });
