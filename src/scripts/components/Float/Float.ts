@@ -83,16 +83,8 @@ export default defineComponent((options: Options = {}) => {
       if (prefersReducedMotion()) return;
 
       this.targetMousePosition = {
-        x: gsap.utils.normalize(
-          window.innerWidth / 2,
-          window.innerWidth,
-          clientX
-        ),
-        y: gsap.utils.normalize(
-          window.innerHeight / 2,
-          window.innerHeight,
-          clientY
-        ),
+        x: clientX / window.innerWidth,
+        y: clientX / window.innerHeight,
       };
 
       this.animateMousePosition();
@@ -122,10 +114,12 @@ export default defineComponent((options: Options = {}) => {
     },
 
     animateMousePosition() {
+      const { x, y } = this.targetMousePosition;
+
       gsap.to(this.mousePosition, {
+        x,
+        y,
         duration: this.options.duration,
-        x: this.targetMousePosition.x,
-        y: this.targetMousePosition.y,
         ease: "power4.out",
         onUpdate: (e) => this.setPosition(),
       });
@@ -140,9 +134,14 @@ export default defineComponent((options: Options = {}) => {
     },
 
     setPosition() {
-      let delta = {
-        x: this.targetMousePosition.x - this.mousePosition.x,
-        y: this.targetMousePosition.y - this.mousePosition.y,
+      const { abs } = Math;
+      const { x: currentX, y: currentY } = this.mousePosition;
+      const { x: targetX, y: targetY } = this.targetMousePosition;
+
+      /** delta, rounded to 4 decimal points */
+      const delta = {
+        x: parseFloat((targetX - currentX).toFixed(4)),
+        y: parseFloat((currentY - targetY).toFixed(4)),
       };
 
       const pos = {
@@ -151,13 +150,10 @@ export default defineComponent((options: Options = {}) => {
       };
 
       const scale = {
-        x:
-          this.scale +
-          Math.abs(delta.x) * Math.abs(this.options.strength.x) * 0.15,
-        y:
-          this.scale +
-          Math.abs(delta.y) * Math.abs(this.options.strength.y) * 0.15,
+        x: this.scale + Math.abs(delta.x) * this.options.strength.x * 0.15,
+        y: this.scale + Math.abs(delta.y) * this.options.strength.y * 0.15,
       };
+
       const skew = {
         x: delta.x * this.options.strength.x * 400 * this.scale,
         y: delta.y * this.options.strength.y * 400 * this.scale,
@@ -168,8 +164,9 @@ export default defineComponent((options: Options = {}) => {
         y: pos.y,
         scaleX: scale.x,
         scaleY: scale.y,
-        skewX: `${skew.x}deg`,
+        skewX: `${skew.y}deg`,
         skewY: `${skew.y}deg`,
+        // skewY: `${skew.y}deg`,
       };
 
       const props = this.options.properties.reduce((acc, key) => {
