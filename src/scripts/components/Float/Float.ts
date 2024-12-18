@@ -160,8 +160,8 @@ export default defineComponent((options: Options = {}) => {
       const props: gsap.TweenVars = {
         x: -offset.x * factors.position * windowWidth * intensity,
         y: -offset.y * factors.position * windowWidth * intensity,
-        scaleX: 1 + scale * factors.scale * windowWidth,
-        scaleY: 1 - scale * factors.scale * windowWidth,
+        scaleX: 1 + scale * factors.scale * windowWidth * intensity,
+        scaleY: 1 - scale * factors.scale * windowWidth * intensity,
         rotation,
       };
 

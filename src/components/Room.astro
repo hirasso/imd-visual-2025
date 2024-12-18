@@ -2,18 +2,18 @@
 import type { Options as FloatOptions } from "../scripts/components/Float/Float.ts";
 
 const floatOptions: FloatOptions = {
-  factors: {
-    position: 0,
-    scale: 0
-  },
-  intensity: 0,
+  // factors: {
+  //   position: 0,
+  //   scale: 0
+  // },
+  intensity: 0.1,
   debug: true
 };
 
 ---
 
 <div x-data="Room" x-bind="bindings" class="room">
-  <!-- <div x-data={`Float(${JSON.stringify(floatOptions)})`} x-bind="bindings"> -->
+  <div x-data={`Float(${JSON.stringify(floatOptions)})`} x-bind="bindings">
     <div data-slot></div>
-  <!-- </div> -->
+  </div>
 </div>
