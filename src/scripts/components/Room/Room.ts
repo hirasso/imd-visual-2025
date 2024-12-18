@@ -11,10 +11,17 @@ export default defineComponent(() => {
   const cubeSize = 20; // Size of the cube
   const cubeDepth = 50;
   const rotationSpeed = 0.0005;
-  const tiltStrength = 0.05;
+  const tiltStrength = 0.02;
+  const tilt = { x: 0, y: 0 };
+  const animationOptions = { duration: 1, ease: "power4.out" };
+  const animate = {
+    tilt: {
+      x: gsap.quickTo(tilt, "x", animationOptions),
+      y: gsap.quickTo(tilt, "y", animationOptions),
+    },
+  };
 
   return {
-    tilt: { x: 0, y: 0 },
     scene: new THREE.Scene(),
     camera: new THREE.PerspectiveCamera(
       50,
@@ -32,7 +39,7 @@ export default defineComponent(() => {
     bindings: {
       "@scroll:progress.window": "onScrollProgress",
       "@pointermove.window": "onPointerMove",
-      "@resize.window": "onResize"
+      "@resize.window": "onResize",
     },
 
     async init() {
@@ -41,6 +48,8 @@ export default defineComponent(() => {
 
       this.onResize();
       $("[data-slot]", this.$root)!.replaceWith(this.renderer.domElement);
+
+      tilt.x = tilt.y = 0;
 
       // Create the box geometry
       const geometry = new THREE.BoxGeometry(
@@ -89,8 +98,8 @@ export default defineComponent(() => {
         }
 
         cube.rotation.z += rotationSpeed;
-        cube.rotation.x = tiltStrength - 2 * tiltStrength * this.tilt.x;
-        cube.rotation.y = -tiltStrength + 2 * tiltStrength * this.tilt.y;
+        cube.rotation.x = tiltStrength - 2 * tiltStrength * tilt.x;
+        cube.rotation.y = -tiltStrength + 2 * tiltStrength * tilt.y;
 
         // Render the scene
         this.renderer.render(this.scene, this.camera);
@@ -110,7 +119,8 @@ export default defineComponent(() => {
       detail: { progress },
     }: CustomEvent<{ progress: number }>) {
       const modified = this.cam.z * 1 * progress;
-      this.camera.position.z = this.cam.z < 0 ? this.cam.z + modified : this.cam.z - modified;
+      this.camera.position.z =
+        this.cam.z < 0 ? this.cam.z + modified : this.cam.z - modified;
       this.camera.updateProjectionMatrix();
     },
 
@@ -122,12 +132,8 @@ export default defineComponent(() => {
     },
 
     onPointerMove({ clientX, clientY }: PointerEvent) {
-      gsap.to(this.tilt, {
-        x: (clientY / window.innerHeight) * 2,
-        y: (clientX / window.innerWidth) * 2,
-        duration: 1,
-        ease: "power4.out",
-      });
+      animate.tilt.x((clientY / window.innerHeight) * 2);
+      animate.tilt.y((clientX / window.innerWidth) * 2);
     },
   };
 });
