@@ -18,25 +18,50 @@ const defaults = {
 export type Options = Partial<typeof defaults>;
 
 export default defineComponent((options: Options = {}) => {
+  let offset: Point = { x: 0, y: 0 };
+  let targetOffset: Point = { x: 0, y: 0 };
+
   return {
-    mousePosition: { x: 0, y: 0 },
-    targetMousePosition: { x: 0, y: 0 },
     scale: 1,
     minScale: 1,
     position: null,
     options: { ...defaults, ...options },
-    center: { x: 0, y: 0 },
-    children: [] as HTMLElement[],
+    origin: { x: 0, y: 0 },
+
+    animate: {
+      offsetX: undefined as Function | undefined,
+      offsetY: undefined as Function | undefined,
+      root: undefined as Function | undefined,
+      children: undefined as Function | undefined,
+    },
 
     init() {
       this.options.factors = { ...defaults.factors, ...options.factors };
-      this.children = $$(":scope > *", this.$root);
+      const children = $$(":scope > *", this.$root);
+
+      const offsetAnimationOptions = {
+        duration: this.options.duration,
+        ease: "power4.out",
+        onUpdate: () => this.setProps()
+      }
+
+      /**
+       * Optimize performance.
+       * @see https://gsap.com/docs/v3/GSAP/gsap.quickTo()
+       * @see https://gsap.com/docs/v3/GSAP/gsap.quickSetter()
+       */
+      this.animate = {
+        offsetX: gsap.quickTo(offset, 'x', offsetAnimationOptions),
+        offsetY: gsap.quickTo(offset, 'y', offsetAnimationOptions),
+        root: gsap.quickSetter(this.$root, "css"),
+        children: gsap.quickSetter(children, "css")
+      }
 
       this.setInitialStyles();
-      this.$el.classList.add("float-enabled");
+
       this.fit();
 
-      this.setPosition();
+      this.setProps();
     },
 
     bindings: {
@@ -49,20 +74,20 @@ export default defineComponent((options: Options = {}) => {
     setInitialStyles() {
       this.$root.style.willChange = "transform";
 
-      const position = window.getComputedStyle(this.$el).position;
+      const position = window.getComputedStyle(this.$root).position;
       switch (position) {
         case "static":
-          this.$el.style.position = "relative";
+          this.$root.style.position = "relative";
           break;
         case "inline":
-          this.$el.style.position = "inline-block";
+          this.$root.style.position = "inline-block";
           break;
       }
     },
 
     fit() {
-      const rect = this.$el.getBoundingClientRect();
-      this.center = {
+      const rect = this.$root.getBoundingClientRect();
+      this.origin = {
         x: rect.x + rect.width / 2,
         y: rect.y + rect.height / 2,
       };
@@ -73,12 +98,12 @@ export default defineComponent((options: Options = {}) => {
 
       const { innerWidth: w, innerHeight: h } = window;
 
-      this.targetMousePosition = {
+      targetOffset = {
         x: gsap.utils.normalize(w / 2, w, clientX),
         y: gsap.utils.normalize(h / 2, h, clientY),
       };
 
-      this.animateMousePosition();
+      this.animateOffset();
 
       if (this.options.scaleWithMouseDistance) {
         this.scaleWithMouse({ x: clientX, y: clientY });
@@ -104,54 +129,46 @@ export default defineComponent((options: Options = {}) => {
       ).matches;
     },
 
-    animateMousePosition() {
-      const { x, y } = this.targetMousePosition;
+    animateOffset() {
+      const { x, y } = targetOffset;
 
-      gsap.to(this.mousePosition, {
-        x,
-        y,
-        duration: this.options.duration,
-        ease: "power4.out",
-        onUpdate: (e) => this.setPosition(),
-      });
+      this.animate.offsetX!(x);
+      this.animate.offsetY!(y);
     },
 
     scaleWithMouse(pos: { x: number; y: number }) {
-      const distX = pos.x + window.scrollX - this.center.x;
-      const distY = pos.y + window.scrollY - this.center.y;
+      const distX = pos.x + window.scrollX - this.origin.x;
+      const distY = pos.y + window.scrollY - this.origin.y;
       const dist = Math.sqrt(distX * distX + distY * distY);
       const proximity = 1 - Math.min(1, gsap.utils.normalize(0, 500, dist));
       this.scale = Math.max(this.minScale, 1 * (1 + proximity));
     },
 
-    setPosition() {
-      const { x: currentX, y: currentY } = this.mousePosition;
-      const { x: targetX, y: targetY } = this.targetMousePosition;
+    setProps() {
       const { innerWidth: windowWidth } = window;
       const { factors, intensity } = this.options;
 
       /** mousemove delta, rounded to 4 decimal points */
       const delta = {
-        x: parseFloat((targetX - currentX).toFixed(4)),
-        y: parseFloat((targetY - currentY).toFixed(4)),
+        x: parseFloat((targetOffset.x - offset.x).toFixed(4)),
+        y: parseFloat((targetOffset.y - offset.y).toFixed(4)),
       };
 
       const scale = getScale(delta);
       const rotation = getAngle(delta);
 
       const props: gsap.TweenVars = {
-        x: -this.mousePosition.x * factors.position * windowWidth * intensity,
-        y: -this.mousePosition.y * factors.position * windowWidth * intensity,
+        x: -offset.x * factors.position * windowWidth * intensity,
+        y: -offset.y * factors.position * windowWidth * intensity,
         scaleX: 1 + scale * factors.scale * windowWidth,
         scaleY: 1 - scale * factors.scale * windowWidth,
         rotation,
       };
+
       this.log(props);
 
-      gsap.set(this.$root, props);
-      gsap.set(this.children, {
-        rotation: -rotation,
-      });
+      this.animate.root!(props);
+      this.animate.children!({ rotation: -rotation });
     },
 
     log(...args: any[]) {
@@ -173,12 +190,4 @@ function getScale({ x, y }: Point) {
 /** Get the angle of the current pointermove delta */
 function getAngle({ x, y }: Point) {
   return (Math.atan2(y, x) * 180) / Math.PI;
-}
-
-/** Get the offset of the current pointermove delta */
-function getOffset({ x, y }: Point) {
-  return {
-    x,
-    y,
-  };
 }
