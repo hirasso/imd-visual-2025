@@ -12,6 +12,7 @@ const defaults = {
   scaleWithMouseDistance: true,
   scaleOnHover: false,
   duration: 1,
+  debug: false,
 };
 
 export type Options = Partial<typeof defaults>;
@@ -147,11 +148,18 @@ export default defineComponent((options: Options = {}) => {
         scaleY: 1 - scale * factors.scale * windowWidth,
         rotation,
       };
+      this.log(props);
 
       gsap.set(this.$root, props);
       gsap.set(this.children, {
         rotation: -rotation,
       });
+    },
+
+    log(...args: any[]) {
+      if (this.options.debug) {
+        console.log(...args);
+      }
     },
 
     destroy() {},

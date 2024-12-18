@@ -123,8 +123,8 @@ export default defineComponent(() => {
 
     onPointerMove({ clientX, clientY }: PointerEvent) {
       gsap.to(this.tilt, {
-        x: clientY / window.innerHeight,
-        y: clientX / window.innerWidth,
+        x: (clientY / window.innerHeight) * 2,
+        y: (clientX / window.innerWidth) * 2,
         duration: 0.5,
         ease: "power4.out",
       });
