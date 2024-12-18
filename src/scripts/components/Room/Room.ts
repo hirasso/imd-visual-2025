@@ -125,7 +125,7 @@ export default defineComponent(() => {
       gsap.to(this.tilt, {
         x: (clientY / window.innerHeight) * 2,
         y: (clientX / window.innerWidth) * 2,
-        duration: 0.5,
+        duration: 1,
         ease: "power4.out",
       });
     },

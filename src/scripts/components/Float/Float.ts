@@ -36,8 +36,6 @@ export default defineComponent((options: Options = {}) => {
       this.$el.classList.add("float-enabled");
       this.fit();
 
-      this.targetMousePosition = this.mousePosition = { x: 0, y: 0 };
-
       this.setPosition();
     },
 
