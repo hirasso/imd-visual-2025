@@ -1,23 +1,15 @@
 import { gsap } from "gsap";
 import { $$, defineComponent, prefersReducedMotion } from "../../utils.js";
 
-const properties = [
-  "x",
-  "y",
-  "scaleX",
-  "scaleY",
-  "rotation",
-  "skewX",
-  "skewY",
-] as const;
-type Property = (typeof properties)[number];
-
 type Point = { x: number; y: number };
 
 const defaults = {
-  strength: { x: 0.1, y: 0.1 },
-  properties: [...properties],
-  scaleWithMouseDistance: false,
+  factors: {
+    position: 0.05,
+    scale: 0.15,
+  },
+  intensity: 1,
+  scaleWithMouseDistance: true,
   scaleOnHover: false,
   duration: 1,
 };
@@ -36,9 +28,7 @@ export default defineComponent((options: Options = {}) => {
     children: [] as HTMLElement[],
 
     init() {
-      /** make options.properties unique */
-      this.options.properties = [...new Set(this.options.properties)];
-
+      this.options.factors = { ...defaults.factors, ...options.factors };
       this.children = $$(":scope > *", this.$root);
 
       this.setInitialStyles();
@@ -136,75 +126,53 @@ export default defineComponent((options: Options = {}) => {
     },
 
     setPosition() {
-      const { abs } = Math;
       const { x: currentX, y: currentY } = this.mousePosition;
       const { x: targetX, y: targetY } = this.targetMousePosition;
+      const { innerWidth: windowWidth } = window;
+      const { factors, intensity } = this.options;
 
-      /** delta, rounded to 4 decimal points */
+      /** mousemove delta, rounded to 4 decimal points */
       const delta = {
         x: parseFloat((targetX - currentX).toFixed(4)),
         y: parseFloat((targetY - currentY).toFixed(4)),
       };
 
-      // Calculate the angle in radians
-      const angleInRadians = Math.atan2(delta.y, delta.x);
-
-      // Convert radians to degrees
-      const angleInDegrees = angleInRadians * (180 / Math.PI);
-
-      const pos = {
-        x: -this.mousePosition.x * this.options.strength.x * this.scale * 500,
-        y: -this.mousePosition.y * this.options.strength.y * this.scale * 500,
-      };
-
-      // const scale = {
-      //   x: this.scale + Math.abs(delta.x) * this.options.strength.x * 0.15,
-      //   y: this.scale + Math.abs(delta.y) * this.options.strength.y * 0.15,
-      // };
-
-      const skew = {
-        x: abs(delta.x) * this.options.strength.x * 400 * this.scale,
-        y: abs(delta.y) * this.options.strength.y * 400 * this.scale,
-      };
-
-      const rotation = getAngle(delta);
       const scale = getScale(delta);
+      const rotation = getAngle(delta);
 
-      const allProps: Record<Property, string | number> = {
-        x: pos.x * this.options.strength.x,
-        y: pos.y * this.options.strength.y,
-        scaleX: 1 + scale * this.options.strength.x * 1000, //scale.x,
-        scaleY: 1 - scale * this.options.strength.y * 1000, //scale.y,
+      const props: gsap.TweenVars = {
+        x: -this.mousePosition.x * factors.position * windowWidth * intensity,
+        y: -this.mousePosition.y * factors.position * windowWidth * intensity,
+        scaleX: 1 + scale * factors.scale * windowWidth,
+        scaleY: 1 - scale * factors.scale * windowWidth,
         rotation,
-        skewX: `${skew.x}deg`,
-        skewY: `${skew.y}deg`,
       };
-
-      const props = this.options.properties.reduce((acc, key) => {
-        acc[key] = allProps[key];
-        return acc;
-      }, {} as Partial<typeof allProps>);
 
       gsap.set(this.$root, props);
-
-      if (this.options.properties.includes("rotation")) {
-        gsap.set(this.children, {
-          rotation: -rotation,
-        });
-      }
+      gsap.set(this.children, {
+        rotation: -rotation,
+      });
     },
 
     destroy() {},
   };
 });
 
-// Function for Mouse Move Scale Change
+/** Get the scale of the current pointermove delta */
 function getScale({ x, y }: Point) {
   const distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   return Math.min(distance / 735, 0.35);
 }
 
-// Function For Mouse Movement Angle in Degrees
+/** Get the angle of the current pointermove delta */
 function getAngle({ x, y }: Point) {
   return (Math.atan2(y, x) * 180) / Math.PI;
+}
+
+/** Get the offset of the current pointermove delta */
+function getOffset({ x, y }: Point) {
+  return {
+    x,
+    y,
+  };
 }

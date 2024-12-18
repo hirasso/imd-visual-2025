@@ -23,11 +23,7 @@ const { size, image, amount = 1, stacked = false } = Astro.props;
 const { min, max } = Math;
 
 const floatOptions: FloatOptions = {
-  strength: {
-    x: min(0.4, max(0.15, size * 0.02)),
-    y: min(0.4, max(0.15, size * 0.02)),
-  },
-  properties: ["x", "y", "rotation", "scaleX", "scaleY"],
+  intensity: size * 0.05
 };
 
 const ballOptions: BallOptions = {
