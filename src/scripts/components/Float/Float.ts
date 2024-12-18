@@ -5,8 +5,8 @@ type Point = { x: number; y: number };
 
 const defaults = {
   factors: {
-    position: 0.05,
-    scale: 0.15,
+    position: 1,
+    scale: 1,
   },
   intensity: 1,
   scaleWithMouseDistance: true,
@@ -156,16 +156,15 @@ export default defineComponent((options: Options = {}) => {
 
       const scale = getScale(delta);
       const rotation = getAngle(delta);
+      const screenMultiplier = Math.max(1, Math.min(5, window.innerWidth * 0.01));
 
       const props: gsap.TweenVars = {
-        x: -offset.x * factors.position * windowWidth * intensity,
-        y: -offset.y * factors.position * windowWidth * intensity,
-        scaleX: 1 + scale * factors.scale * windowWidth * intensity,
-        scaleY: 1 - scale * factors.scale * windowWidth * intensity,
+        x: -offset.x * factors.position * intensity * screenMultiplier,
+        y: -offset.y * factors.position * intensity * screenMultiplier,
+        scaleX: 1 + scale * factors.scale * intensity * screenMultiplier,
+        scaleY: 1 - scale * factors.scale * intensity * screenMultiplier,
         rotation,
       };
-
-      this.log(props);
 
       this.animate.root!(props);
       this.animate.children!({ rotation: -rotation });
