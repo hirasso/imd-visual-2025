@@ -1,5 +1,10 @@
 import { gsap } from "gsap";
-import { $, defineComponent } from "../../utils.js";
+import {
+  $,
+  defineComponent,
+  onTick,
+  prefersReducedMotion,
+} from "../../utils.js";
 
 const defaults = {
   container: window as Window | string,
@@ -69,7 +74,9 @@ export default defineComponent((options: Options = {}) => {
       };
 
       this.applyTransform();
-      requestAnimationFrame(() => this.move());
+      if (!prefersReducedMotion()) {
+        onTick((delta) => this.move(delta));
+      }
     },
 
     bindings: {
@@ -149,9 +156,7 @@ export default defineComponent((options: Options = {}) => {
       return this.getBottom() + value;
     },
 
-    move() {
-      requestAnimationFrame(() => this.move());
-
+    move(delta: number) {
       if (this.paused) {
         return;
       }
@@ -171,9 +176,9 @@ export default defineComponent((options: Options = {}) => {
       }
 
       const speedBreak = this.getSpeedBreak();
-      this.pos.x += this.speed.x * speedBreak.x;
-      this.pos.y += this.speed.y * speedBreak.y;
-      this.rotation += this.speed.rotation;
+      this.pos.x += this.speed.x * speedBreak.x * delta;
+      this.pos.y += this.speed.y * speedBreak.y * delta;
+      this.rotation += this.speed.rotation * delta;
 
       this.applyTransform();
       this.percentPosition = this.getPercentPosition();

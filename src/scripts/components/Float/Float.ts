@@ -13,6 +13,7 @@ const defaults = {
   scaleOnHover: false,
   duration: 1,
   debug: false,
+  willChange: true,
 };
 
 export type Options = Partial<typeof defaults>;
@@ -72,7 +73,7 @@ export default defineComponent((options: Options = {}) => {
     },
 
     setInitialStyles() {
-      this.$root.style.willChange = "transform";
+      if (this.options.willChange) this.$root.style.willChange = "transform";
 
       const position = window.getComputedStyle(this.$root).position;
       switch (position) {

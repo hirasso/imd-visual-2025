@@ -1,11 +1,27 @@
-import { defineComponent, isTouch } from "../../utils.ts";
+import { gsap } from "gsap";
+import { defineComponent, isTouch, setLoopRunning } from "../../utils.ts";
 
 export default defineComponent(() => {
   return {
-    init() {},
+    inViewport: true,
+
+    init() {
+      gsap.ticker.fps(30);
+
+      /** Inside an iframe, this observes the parent's viewport */
+      new IntersectionObserver(([entry]) => {
+        this.inViewport = entry.isIntersecting;
+        this.updateLoop();
+      }).observe(this.$root);
+    },
 
     bindings: {
       "@message.window": "onMessage",
+      "@visibilitychange.document": "updateLoop",
+    },
+
+    updateLoop() {
+      setLoopRunning(this.inViewport && document.visibilityState === "visible");
     },
 
     /**

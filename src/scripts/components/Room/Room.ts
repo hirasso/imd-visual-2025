@@ -1,5 +1,10 @@
 import { gsap } from "gsap";
-import { $, defineComponent, prefersReducedMotion } from "../../utils.js";
+import {
+  $,
+  defineComponent,
+  onTick,
+  prefersReducedMotion,
+} from "../../utils.js";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -92,19 +97,18 @@ export default defineComponent(() => {
       controls.enabled = false; // Disable by default to lock the camera inside the cube
 
       // Animation Loop
-      const animate = () => {
-        if (!prefersReducedMotion()) {
-          requestAnimationFrame(animate);
-        }
-
-        cube.rotation.z += rotationSpeed;
+      const animate = (delta: number) => {
+        cube.rotation.z += rotationSpeed * delta;
         cube.rotation.x = tiltStrength - 2 * tiltStrength * tilt.x;
         cube.rotation.y = -tiltStrength + 2 * tiltStrength * tilt.y;
 
         // Render the scene
         this.renderer.render(this.scene, this.camera);
       };
-      animate();
+      animate(1);
+      if (!prefersReducedMotion()) {
+        onTick(animate);
+      }
     },
 
     getSize() {

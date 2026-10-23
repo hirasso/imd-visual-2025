@@ -1,4 +1,5 @@
 import type { AlpineComponent, DirectiveCallback } from "alpinejs";
+import { gsap } from "gsap";
 
 /**
  * Check if currently on a touch device
@@ -69,3 +70,27 @@ export function extractElement(html: string, selector: string) {
   const doc = parser.parseFromString(html as string, "text/html");
   return doc.querySelector<HTMLElement>(selector);
 }
+let loopRunning = true;
+
+/**
+ * Run a callback on every gsap tick while the loop is running.
+ * Receives a delta factor relative to 60fps
+ */
+export const onTick = (fn: (delta: number) => void) => {
+  gsap.ticker.add((_time, deltaTime) => loopRunning && fn(deltaTime / (1000 / 60)));
+};
+
+/**
+ * Start or stop the shared loop and all gsap animations
+ */
+export const setLoopRunning = (running: boolean) => {
+  if (running === loopRunning) return;
+  loopRunning = running;
+  if (running) {
+    gsap.globalTimeline.resume();
+    gsap.ticker.wake();
+  } else {
+    gsap.globalTimeline.pause();
+    gsap.ticker.sleep();
+  }
+};
