@@ -162,13 +162,17 @@ export default defineComponent((options: Options = {}) => {
       const props: gsap.TweenVars = {
         x: -offset.x * factors.position * intensity * screenMultiplier,
         y: -offset.y * factors.position * intensity * screenMultiplier,
-        scaleX: 1 + scale * factors.scale * intensity * screenMultiplier,
-        scaleY: 1 - scale * factors.scale * intensity * screenMultiplier,
-        rotation,
       };
 
+      /** translate only if scale is disabled */
+      if (factors.scale) {
+        props.scaleX = 1 + scale * factors.scale * intensity * screenMultiplier;
+        props.scaleY = 1 - scale * factors.scale * intensity * screenMultiplier;
+        props.rotation = rotation;
+        this.animate.children!({ rotation: -rotation });
+      }
+
       this.animate.root!(props);
-      this.animate.children!({ rotation: -rotation });
     },
 
     log(...args: any[]) {
